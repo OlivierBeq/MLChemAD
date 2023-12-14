@@ -14,7 +14,7 @@ from scipy.stats import f as Fdistrib
 from sklearn.decomposition import PCA
 from sklearn.ensemble import IsolationForest
 from sklearn.neighbors._kde import KernelDensity
-from sklearn.preprocessing import RobustScaler, MinMaxScaler, MaxAbsScaler, StandardScaler
+from sklearn.preprocessing import RobustScaler, MinMaxScaler, MaxAbsScaler, StandardScaler, FunctionTransformer
 from sklearn.utils.extmath import stable_cumsum
 
 from .base import ApplicabilityDomain
@@ -449,21 +449,25 @@ class KNNApplicabilityDomain(ApplicabilityDomain):
 
     def __init__(self, k: int = 5,
                  alpha: float = 0.95,
+                 hard_threshold: float = None,
                  scaling: str = 'robust',
                  dist: str = 'euclidean',
                  scaler_kwargs=None):
         f"""Create the k-Nearest Neighbor applicability domain.
 
         :param k: number of nearest neighbors
-        :param alpha: ratio of inlier samples
-        :param scaling: scaling method; must be one of 'robust', 'minmax', 'maxabs' or 'standard' (default: 'robust')
+        :param alpha: ratio of inlier samples (default: 0.95); ignored if hard_threshold is set
+        :param hard_threshold: samples with a distance greater or equal to this threshold will be considered outliers
+        :param scaling: scaling method; must be one of 'robust', 'minmax', 'maxabs', 'standard' or None (default: 'robust')
         :param dist: kNN distance to be calculated (default: euclidean); one of {list(dist_fns.keys())}
         :param scaler_kwargs: additional parameters to supply to the scaler
         """
         super().__init__()
         if scaler_kwargs is None:
             scaler_kwargs = {}
-        scaling_methods = ('robust', 'minmax', 'maxabs', 'standard')
+        if alpha > 1 or alpha < 0:
+            raise ValueError('alpha must lie between 0 and 1')
+        scaling_methods = ('robust', 'minmax', 'maxabs', 'standard', None)
         if scaling not in scaling_methods:
             raise ValueError(f'scaling method must be one of {scaling_methods}')
         # Scaler for input data
@@ -475,14 +479,17 @@ class KNNApplicabilityDomain(ApplicabilityDomain):
             self.scaler = MaxAbsScaler(**scaler_kwargs)
         elif scaling == 'standard':
             self.scaler = StandardScaler(**scaler_kwargs)
+        elif scaling is None:
+            self.scaler = FunctionTransformer(lambda x: x)
         else:
-            raise NotImplementedError('scaling methof not implemented')
+            raise NotImplementedError('scaling method not implemented')
         if dist not in dist_fns.keys():
             raise NotImplementedError('distance type is not available')
         else:
             self.dist = dist
         self.k = k
         self.alpha = alpha
+        self.hard_threshold = hard_threshold
 
     def _fit(self, X):
         """Fit the applicability domain to the given feature matrix
@@ -495,7 +502,10 @@ class KNNApplicabilityDomain(ApplicabilityDomain):
         self.kNN_dist = self._get_kNN_distance(self.X_norm, self.X_norm, k=self.k, sort=False)
         kNN_train_distance_sorted_ = np.sort(self.kNN_dist)
         # Find the confidence threshold
-        self.threshold_ = kNN_train_distance_sorted_[floor(kNN_train_distance_sorted_.shape[0] * self.alpha) - 1]
+        if self.hard_threshold:
+            self.threshold_ = self.hard_threshold
+        else:
+            self.threshold_ = kNN_train_distance_sorted_[floor(kNN_train_distance_sorted_.shape[0] * self.alpha) - 1]
         return self
 
     def _contains(self, sample):
@@ -512,6 +522,10 @@ class KNNApplicabilityDomain(ApplicabilityDomain):
         kNN_sample_dist = self._get_kNN_distance(sample, self.X_norm, k=self.k, sort=False)
         # Threshold normalized distance
         norm_dist = kNN_sample_dist / self.threshold_
+        if self.hard_threshold:
+            # Threshold is excluded when given a cutoff value
+            return norm_dist < 1
+        # Otherwise the threshold is included
         return norm_dist <= 1
 
     def _get_kNN_distance(self, X1, X2, k = 5, sort: bool = True):

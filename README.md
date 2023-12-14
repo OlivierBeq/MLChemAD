@@ -32,11 +32,14 @@ Depending on the definition of the applicability domain, some samples of the tra
 The applicability domain defined by MLChemAD as the following:
 - Bounding Box
 - PCA Bounding Box
-- Convex Hull ***(does not scale well)***
-- TOPKAT's Optimum Prediction Space ***(recommended with molecular descriptors)***
+- Convex Hull<br/>
+  ***(does not scale well)***
+- TOPKAT's Optimum Prediction Space<br/>
+  ***(recommended with molecular descriptors)***
 - Leverage
 - Hotelling T²
 - Distance to Centroids
-- k-Nearest Neighbors ***(recommended with molecular fingerprints with the use of `dist='rogerstanimoto'`)***
+- k-Nearest Neighbors<br/>
+  ***(recommended with molecular fingerprints with the use of `dist='rogerstanimoto'`, `scaling=None` and `hard_threshold=0.75` for ECFP fingerprints)***
 - Isolation Forests
 - Non-parametric Kernel Densities

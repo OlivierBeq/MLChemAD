@@ -243,8 +243,11 @@ class TopKatApplicabilityDomain(ApplicabilityDomain):
         """
         # Keep scaling factors
         self.X_min_, self.X_max_ = X.min(axis=0), X.max(axis=0)
+        # Replace extremums for features with no variance
         # Obtain the S-space from the input P-space
-        S = (2 * X - self.X_max_ - self.X_min_) / (self.X_max_ - self.X_min_)
+        S = (2 * X - self.X_max_ - self.X_min_) / ((self.X_max_ - self.X_min_)
+                                                   if (self.X_max_ - self.X_min_) != 0
+                                                   else 1)
         # Add 1-filled column at the beginning of S
         S = np.c_[np.ones(S.shape[0]), S]
         # Obtain eigen values and vectors

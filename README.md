@@ -22,7 +22,8 @@ app_domain.fit(data.training)
 print(app_domain.contains(data.test))
 
 # ... or a unique sample
-print(app_domain.contains(data.test[5]))
+sample = data.test[5] # Obtain the 5th row as a pandas.Series object 
+print(app_domain.contains(sample))
 ```
 
 Depending on the definition of the applicability domain, some samples of the training set might be outliers themselves.
@@ -32,10 +33,10 @@ The applicability domain defined by MLChemAD as the following:
 - Bounding Box
 - PCA Bounding Box
 - Convex Hull ***(does not scale well)***
-- TOPKAT's Optimum Prediction Space ***(recommended)***
+- TOPKAT's Optimum Prediction Space ***(recommended with molecular descriptors)***
 - Leverage
 - Hotelling T²
 - Distance to Centroids
-- k-Nearest Neighbors
+- k-Nearest Neighbors ***(recommended with molecular fingerprints with the use of `dist='rogerstanimoto'`)***
 - Isolation Forests
 - Non-parametric Kernel Densities

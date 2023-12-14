@@ -245,9 +245,8 @@ class TopKatApplicabilityDomain(ApplicabilityDomain):
         self.X_min_, self.X_max_ = X.min(axis=0), X.max(axis=0)
         # Replace extremums for features with no variance
         # Obtain the S-space from the input P-space
-        S = (2 * X - self.X_max_ - self.X_min_) / ((self.X_max_ - self.X_min_)
-                                                   if (self.X_max_ - self.X_min_) != 0
-                                                   else 1)
+        S = (2 * X - self.X_max_ - self.X_min_) / np.where((self.X_max_ - self.X_min_) != 0,
+                                                           (self.X_max_ - self.X_min_),1)
         # Add 1-filled column at the beginning of S
         S = np.c_[np.ones(S.shape[0]), S]
         # Obtain eigen values and vectors
@@ -265,7 +264,8 @@ class TopKatApplicabilityDomain(ApplicabilityDomain):
         :param sample: sample to check the applicability domain membership of.
         """
         # Scale the sample
-        Ssample = (2 * sample - self.X_max_ - self.X_min_) / (self.X_max_ - self.X_min_)
+        Ssample = (2 * sample - self.X_max_ - self.X_min_) / np.where((self.X_max_ - self.X_min_) != 0,
+                                                                      (self.X_max_ - self.X_min_),1)
         # Add intercept
         if sample.ndim == 1:
             Ssample = np.c_[1, Ssample.reshape((1, -1))]

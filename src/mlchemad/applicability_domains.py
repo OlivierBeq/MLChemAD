@@ -274,7 +274,11 @@ class TopKatApplicabilityDomain(ApplicabilityDomain):
         # Obtain position of sample in the OPS
         OPS_sample = Ssample.dot(self.eigen_vec)
         # Determine the distance to the OPS
-        dOPS = (OPS_sample * OPS_sample).dot(1/self.eigen_val)
+        denom = np.divide(np.ones_like(self.eigen_val, dtype=float),
+                          self.eigen_val,
+                          out=np.zeros_like(self.eigen_val),
+                          where=self.eigen_val!=0)
+        dOPS = (OPS_sample * OPS_sample).dot(denom)
         if sample.ndim == 1 and isinstance(dOPS, np.ndarray):
             dOPS = dOPS.item()
         return dOPS < (5 * (self.num_dims)) / (2 * self.num_points)

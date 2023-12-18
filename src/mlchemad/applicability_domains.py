@@ -391,7 +391,10 @@ class KernelDensityApplicabilityDomain(ApplicabilityDomain):
 
 
 class IsolationForestApplicabilityDomain(ApplicabilityDomain):
+    """Applicability domain defined using isolation forest."""
+
     def __init__(self):
+        super().__init__()
         self.isol = IsolationForest(max_samples=0.7, max_features=0.7,  bootstrap=True, random_state=1234)
 
     def _fit(self, X):
@@ -549,3 +552,34 @@ class KNNApplicabilityDomain(ApplicabilityDomain):
         if sort:
             distance.sort()
         return distance
+
+
+class StandardizationApproachApplicabilityDomain(ApplicabilityDomain):
+    """Applicability domain defined using the standardization approach.
+
+    Reference:
+    Roy, Kar & Ambure. In: Chemometrics and Intelligent Laboratory Systems, Volume 145, 2015, Pages 22-29.
+    """
+
+    def __init__(self):
+        super().__init__()
+        self.scaler = StandardScaler()
+
+    def _fit(self, X):
+        self.scaler.fit(X)
+
+    def _contains(self, sample):
+        if sample.ndim == 1:
+            if sample.max() <= 3:
+                return True
+            elif sample.min() > 3:
+                return False
+            else:
+                return sample.mean() + 1.28 * sample.std() <= 3
+        else:
+            return np.array([True
+                             if s.max() <= 3
+                             else (False
+                                   if s.min() > 3
+                                   else s.mean() + 1.28 * s.std() <= 3)
+                             for s in sample])

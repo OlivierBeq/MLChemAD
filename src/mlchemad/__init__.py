@@ -10,4 +10,4 @@ from .applicability_domains import (BoundingBoxApplicabilityDomain, CentroidDist
                                     KernelDensityApplicabilityDomain, LeverageApplicabilityDomain,
                                     PCABoundingBoxApplicabilityDomain, TopKatApplicabilityDomain,
                                     StandardizationApproachApplicabilityDomain)
-from . import data
+from ._data import data

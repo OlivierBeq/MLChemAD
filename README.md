@@ -16,10 +16,10 @@ from mlchemad import TopKatApplicabilityDomain, data
 # Create the applicability domain
 app_domain = TopKatApplicabilityDomain()
 # Fit it to the training set
-app_domain.fit(data.training)
+app_domain.fit(data.mekenyan1993.training)
 
 # Determine outliers from multiple samples (rows) ...
-print(app_domain.contains(data.test))
+print(app_domain.contains(data.mekenyan1993.test))
 
 # ... or a unique sample
 sample = data.test[5] # Obtain the 5th row as a pandas.Series object 

@@ -102,7 +102,7 @@ class Datasets:
 
 def _read_data(in_memory: bool = False):
     # Obtain path to folder
-    path = os.path.join(__file__, os.pardir)
+    path = os.path.dirname(__file__)
     # Obtain files in the folder
     data_files = [f for f in os.listdir(path) if f.endswith('.json')]
     # Obtain datasets

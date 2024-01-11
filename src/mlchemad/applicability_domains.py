@@ -14,7 +14,7 @@ from scipy.stats import f as Fdistrib
 from sklearn.decomposition import PCA
 from sklearn.ensemble import IsolationForest
 from sklearn.neighbors._kde import KernelDensity
-from sklearn.preprocessing import RobustScaler, MinMaxScaler, MaxAbsScaler, StandardScaler, FunctionTransformer
+from sklearn.preprocessing import RobustScaler, MinMaxScaler, MaxAbsScaler, StandardScaler
 from sklearn.utils.extmath import stable_cumsum
 
 from .base import ApplicabilityDomain
@@ -490,7 +490,7 @@ class KNNApplicabilityDomain(ApplicabilityDomain):
         elif scaling == 'standard':
             self.scaler = StandardScaler(**scaler_kwargs)
         elif scaling is None:
-            self.scaler = FunctionTransformer(lambda x: x)
+            self.scaler = None
         else:
             raise NotImplementedError('scaling method not implemented')
         if dist not in dist_fns.keys():
@@ -507,7 +507,7 @@ class KNNApplicabilityDomain(ApplicabilityDomain):
         :param X: feature matrix
         """
         # Normalize the data
-        self.X_norm = self.scaler.fit_transform(X)
+        self.X_norm = self.scaler.fit_transform(X) if self.scaler is not None else X
         # Find the distance to the kNN
         self.kNN_dist = self._get_kNN_distance(self.X_norm, self.X_norm, k=self.k, sort=False)
         kNN_train_distance_sorted_ = np.sort(self.kNN_dist)
@@ -524,10 +524,11 @@ class KNNApplicabilityDomain(ApplicabilityDomain):
         :param sample: sample to check the applicability domain membership of.
         """
         # Scale input features
-        if sample.ndim == 1:
-            sample = self.scaler.transform(sample.reshape((1, len(sample))))
-        else:
-            sample = self.scaler.transform(sample)
+        if self.scaler is not None:
+            if sample.ndim == 1:
+                sample = self.scaler.transform(sample.reshape((1, len(sample))))
+            else:
+                sample = self.scaler.transform(sample)
         # Calculate kNN distance to the training set
         kNN_sample_dist = self._get_kNN_distance(sample, self.X_norm, k=self.k, sort=False)
         # Threshold normalized distance

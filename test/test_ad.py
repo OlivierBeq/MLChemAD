@@ -17,6 +17,7 @@ class TestAD(unittest.TestCase):
         self.mekenyan_veith = data.mekenyan1993
         self.fisher = data.fisher1936
         self.broccatelli = data.broccatelli2011
+        self.hemmerich = data.hemmerich2020
 
     def test_minmax_boundingbox(self):
         ad = BoundingBoxApplicabilityDomain(percentiles=None)
@@ -296,6 +297,17 @@ class TestAD(unittest.TestCase):
                           [ad.contains(x) for x in self.X_cent6_sd1])
         self.assertEquals(ad.contains(self.X_cent1_sd3).tolist(),
                           [ad.contains(x) for x in self.X_cent1_sd3])
+        ad.fit(self.mekenyan_veith.training)
+        self.assertGreaterEqual(sum(ad.contains(self.mekenyan_veith.test)), 0)
+        self.assertLessEqual(sum(ad.contains(self.mekenyan_veith.test)), self.mekenyan_veith.test.shape[0])
+
+    def test_local_outlier_factor(self):
+        ad = LocalOutlierFactorApplicabilityDomain()
+        ad.fit(self.hemmerich.training)
+        self.assertGreater(sum(ad.contains(self.hemmerich.training)),
+                           0.9 * len(self.hemmerich.training))
+        self.assertGreater(sum(ad.contains(self.hemmerich.test)),
+                          0)
         ad.fit(self.mekenyan_veith.training)
         self.assertGreaterEqual(sum(ad.contains(self.mekenyan_veith.test)), 0)
         self.assertLessEqual(sum(ad.contains(self.mekenyan_veith.test)), self.mekenyan_veith.test.shape[0])

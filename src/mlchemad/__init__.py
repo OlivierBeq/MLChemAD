@@ -9,5 +9,5 @@ from .applicability_domains import (BoundingBoxApplicabilityDomain, CentroidDist
                                     IsolationForestApplicabilityDomain, KNNApplicabilityDomain,
                                     KernelDensityApplicabilityDomain, LeverageApplicabilityDomain,
                                     PCABoundingBoxApplicabilityDomain, TopKatApplicabilityDomain,
-                                    StandardizationApproachApplicabilityDomain)
+                                    StandardizationApproachApplicabilityDomain, LocalOutlierFactorApplicabilityDomain)
 from ._data import data

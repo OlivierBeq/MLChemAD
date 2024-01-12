@@ -13,6 +13,7 @@ from scipy.spatial.distance import cdist, _METRICS as dist_fns
 from scipy.stats import f as Fdistrib
 from sklearn.decomposition import PCA
 from sklearn.ensemble import IsolationForest
+from sklearn.neighbors import LocalOutlierFactor
 from sklearn.neighbors._kde import KernelDensity
 from sklearn.preprocessing import RobustScaler, MinMaxScaler, MaxAbsScaler, StandardScaler
 from sklearn.utils.extmath import stable_cumsum
@@ -460,7 +461,7 @@ class KNNApplicabilityDomain(ApplicabilityDomain):
     def __init__(self, k: int = 5,
                  alpha: float = 0.95,
                  hard_threshold: float = None,
-                 scaling: str = 'robust',
+                 scaling: Optional[str] = 'robust',
                  dist: str = 'euclidean',
                  scaler_kwargs=None):
         f"""Create the k-Nearest Neighbor applicability domain.
@@ -584,3 +585,68 @@ class StandardizationApproachApplicabilityDomain(ApplicabilityDomain):
                                    if s.min() > 3
                                    else s.mean() + 1.28 * s.std() <= 3)
                              for s in sample])
+
+
+class LocalOutlierFactorApplicabilityDomain(ApplicabilityDomain):
+    """Applicability domain defined by the local deviation of
+    the density of a given sample with respect to its neighbors.
+
+    Reference:
+    Breunig et al., In: Proc. 2000 ACM SIGMOD Int. Conf. Manag. Data, ACM, New York, NY, USA, 2000, 93–104.
+    """
+
+    def __init__(self, k: int = 5,
+                 threshold: float = 1,
+                 scaling: str = 'minmax',
+                 dist: str = 'euclidean',
+                 contamination: float = 0.10,
+                 scaler_kwargs=None):
+        f"""Create the local outlier factor applicability domain.
+
+        :param k: number of nearest neighbors
+        :param threshold: samples with a distance greater or equal to this threshold will be considered outliers
+        :param scaling: scaling method; must be one of 'robust', 'minmax', 'maxabs', 'standard' or None (default: 'robust')
+        :param dist: kNN distance to be calculated (default: euclidean); one of {list(dist_fns.keys())}
+        :param contamination: exprected proportion of outliers in the data set
+        :param scaler_kwargs: additional parameters to supply to the scaler
+        """
+        super().__init__()
+        if scaler_kwargs is None:
+            scaler_kwargs = {}
+        if contamination > 1 or contamination < 0:
+            raise ValueError('contamination must lie between 0 and 1')
+        scaling_methods = ('robust', 'minmax', 'maxabs', 'standard', None)
+        if scaling not in scaling_methods:
+            raise ValueError(f'scaling method must be one of {scaling_methods}')
+        # Scaler for input data
+        if scaling == 'robust':
+            self.scaler = RobustScaler(**scaler_kwargs)
+        elif scaling == 'minmax':
+            self.scaler = MinMaxScaler(**scaler_kwargs)
+        elif scaling == 'maxabs':
+            self.scaler = MaxAbsScaler(**scaler_kwargs)
+        elif scaling == 'standard':
+            self.scaler = StandardScaler(**scaler_kwargs)
+        elif scaling is None:
+            self.scaler = None
+        else:
+            raise NotImplementedError('scaling method not implemented')
+        if dist not in dist_fns.keys():
+            raise NotImplementedError('distance type is not available')
+        else:
+            self.dist = dist
+        self.k = k
+        self.contamination = contamination
+        self.threshold = threshold
+        self.lof = LocalOutlierFactor(n_neighbors=k, metric=dist, contamination=contamination,
+                                      novelty=True)
+
+    def _fit(self, X):
+        X = self.scaler.fit_transform(X)
+        self.lof.fit(X)
+
+    def _contains(self, sample):
+        if sample.ndim == 1:
+            return self.lof.predict(sample.reshape(1, -1)).item() < self.threshold
+        else:
+            return self.lof.predict(sample) < 1

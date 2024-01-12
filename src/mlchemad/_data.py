@@ -71,6 +71,9 @@ class Dataset:
                             index=data['index'],
                             columns=data['columns'])
 
+    def __repr__(self):
+        return f'<Dataset: (training shape: {self.training.shape}; test shape {self.test.shape})>'
+
 
 class Datasets:
     """Collection of datasets."""

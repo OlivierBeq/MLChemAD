@@ -16,6 +16,7 @@ class TestAD(unittest.TestCase):
         self.X_cent6_sd3, _ = make_blobs(n_samples=1000, n_features=100, centers=[[6] * 100], cluster_std=3, random_state=1234)
         self.mekenyan_veith = data.mekenyan1993
         self.fisher = data.fisher1936
+        self.broccatelli = data.broccatelli2011
 
     def test_minmax_boundingbox(self):
         ad = BoundingBoxApplicabilityDomain(percentiles=None)

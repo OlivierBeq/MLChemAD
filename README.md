@@ -10,10 +10,13 @@ pip install mlchemad
 
 ## Example Usage
 
-```python
-from mlchemad import TopKatApplicabilityDomain, data
+- With molecular fingerprints, prefer the use of the `KNNApplicabilityDomain` with `k=1`, `scaling=None`, `hard_threshold=0.3`, and `dist='rogerstanimoto'`.
+- Otherwise, the use of the `TopKatApplicabilityDomain` is recommended.
 
-# Create the applicability domain
+```python
+from mlchemad import TopKatApplicabilityDomain, KNNApplicabilityDomain, data
+
+# Create the applicability domain using TopKat's definition
 app_domain = TopKatApplicabilityDomain()
 # Fit it to the training set
 app_domain.fit(data.mekenyan1993.training)
@@ -24,6 +27,11 @@ print(app_domain.contains(data.mekenyan1993.test))
 # ... or a unique sample
 sample = data.test[5] # Obtain the 5th row as a pandas.Series object 
 print(app_domain.contains(sample))
+
+# Now with Morgan fingerprints
+app_domain = KNNApplicabilityDomain(k=1, scaling=None, hard_threshold=0.3, dist='rogerstanimoto')
+app_domain.fit(data.broccatelli2011.training.drop(columns='Activity'))
+print(app_domain.contains(data.broccatelli2011.test).drop(columns='Activity'))
 ```
 
 Depending on the definition of the applicability domain, some samples of the training set might be outliers themselves.

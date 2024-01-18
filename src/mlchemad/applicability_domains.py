@@ -13,7 +13,7 @@ from scipy.spatial.distance import cdist, _METRICS as dist_fns
 from scipy.stats import f as Fdistrib
 from sklearn.decomposition import PCA
 from sklearn.ensemble import IsolationForest
-from sklearn.neighbors import LocalOutlierFactor
+from sklearn.neighbors import LocalOutlierFactor, NearestNeighbors
 from sklearn.neighbors._kde import KernelDensity
 from sklearn.preprocessing import RobustScaler, MinMaxScaler, MaxAbsScaler, StandardScaler
 from sklearn.utils.extmath import stable_cumsum
@@ -456,7 +456,7 @@ class CentroidDistanceApplicabilityDomain(ApplicabilityDomain):
 
 
 class KNNApplicabilityDomain(ApplicabilityDomain):
-    """Applicability domain defined using the Hotelling T² approach."""
+    """Applicability domain defined using K-nearest neighbours."""
 
     def __init__(self, k: int = 5,
                  alpha: float = 0.95,
@@ -501,6 +501,7 @@ class KNNApplicabilityDomain(ApplicabilityDomain):
         self.k = k
         self.alpha = alpha
         self.hard_threshold = hard_threshold
+        self.nn = NearestNeighbors(n_neighbors=k, metric=dist)
 
     def _fit(self, X):
         """Fit the applicability domain to the given feature matrix
@@ -509,8 +510,10 @@ class KNNApplicabilityDomain(ApplicabilityDomain):
         """
         # Normalize the data
         self.X_norm = self.scaler.fit_transform(X) if self.scaler is not None else X
+        # Fit the NN
+        self.nn.fit(self.X_norm)
         # Find the distance to the kNN
-        self.kNN_dist = self._get_kNN_distance(self.X_norm, self.X_norm, k=self.k, sort=False)
+        self.kNN_dist = self.nn.kneighbors(self.X_norm, return_distance=True)[0].mean(axis=1)
         kNN_train_distance_sorted_ = np.sort(self.kNN_dist)
         # Find the confidence threshold
         if self.hard_threshold:
@@ -531,7 +534,7 @@ class KNNApplicabilityDomain(ApplicabilityDomain):
             else:
                 sample = self.scaler.transform(sample)
         # Calculate kNN distance to the training set
-        kNN_sample_dist = self._get_kNN_distance(sample, self.X_norm, k=self.k, sort=False)
+        kNN_sample_dist = self.nn.kneighbors(sample, return_distance=True)[0].mean(axis=1)
         # Threshold normalized distance
         norm_dist = kNN_sample_dist / self.threshold_
         if self.hard_threshold:
@@ -539,21 +542,6 @@ class KNNApplicabilityDomain(ApplicabilityDomain):
             return norm_dist < 1
         # Otherwise the threshold is included
         return norm_dist <= 1
-
-    def _get_kNN_distance(self, X1, X2, k = 5, sort: bool = True):
-        distance_ordered = self._get_distance(X1, X2, sort=sort)
-        # Obtain average distance to k-NN
-        kNN_distance = np.mean(distance_ordered[:, :k+1], axis=1)
-        if sort:
-            kNN_distance.sort()
-        return kNN_distance
-
-    def _get_distance(self, XA, XB, sort=True):
-        # Calculate the Euclidean distance for each row vector. distance.shape == [len(XA), len(XB)]
-        distance = cdist(XA, XB, metric=self.dist)
-        if sort:
-            distance.sort()
-        return distance
 
 
 class StandardizationApproachApplicabilityDomain(ApplicabilityDomain):

@@ -353,7 +353,7 @@ class KernelDensityApplicabilityDomain(ApplicabilityDomain):
 
     def __init__(self, threshold: float = 0.01, kernel: str = 'gaussian',
                  bandwidth: str = 'scott', metric: str = 'euclidean'):
-        """Instantiate a BoundingBoxApplicabilityDomain.
+        """Instantiate a KernelDensityApplicabilityDomain.
 
         :param threshold: minimum probability for inlier detection
         :param kernel: kernel to be used

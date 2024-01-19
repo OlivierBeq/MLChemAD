@@ -516,7 +516,7 @@ class KNNApplicabilityDomain(ApplicabilityDomain):
         self.nn.fit(self.X_norm)
         # Find the distance to the kNN
         self.kNN_dist = self.nn.kneighbors(self.X_norm, return_distance=True)[0].mean(axis=1)
-        kNN_train_distance_sorted_ = np.sort(self.kNN_dist)
+        kNN_train_distance_sorted_ = np.trim_zeros(np.sort(self.kNN_dist))
         # Find the confidence threshold
         if self.hard_threshold:
             self.threshold_ = self.hard_threshold

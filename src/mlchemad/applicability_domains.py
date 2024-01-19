@@ -463,15 +463,17 @@ class KNNApplicabilityDomain(ApplicabilityDomain):
                  hard_threshold: float = None,
                  scaling: Optional[str] = 'robust',
                  dist: str = 'euclidean',
-                 scaler_kwargs=None):
+                 scaler_kwargs=None,
+                 njobs: int=1):
         f"""Create the k-Nearest Neighbor applicability domain.
 
         :param k: number of nearest neighbors
-        :param alpha: ratio of inlier samples (default: 0.95); ignored if hard_threshold is set
+        :param alpha: ratio of inlier samples (default: 0.95) calculated from the training set; ignored if hard_threshold is set
         :param hard_threshold: samples with a distance greater or equal to this threshold will be considered outliers
         :param scaling: scaling method; must be one of 'robust', 'minmax', 'maxabs', 'standard' or None (default: 'robust')
         :param dist: kNN distance to be calculated (default: euclidean); one of {list(dist_fns.keys())}
         :param scaler_kwargs: additional parameters to supply to the scaler
+        :param njobs: number of parallel processes used to fit the kNN model
         """
         super().__init__()
         if scaler_kwargs is None:
@@ -501,7 +503,7 @@ class KNNApplicabilityDomain(ApplicabilityDomain):
         self.k = k
         self.alpha = alpha
         self.hard_threshold = hard_threshold
-        self.nn = NearestNeighbors(n_neighbors=k, metric=dist)
+        self.nn = NearestNeighbors(n_neighbors=k, metric=dist, n_jobs=njobs)
 
     def _fit(self, X):
         """Fit the applicability domain to the given feature matrix

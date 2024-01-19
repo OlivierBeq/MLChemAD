@@ -394,9 +394,11 @@ class KernelDensityApplicabilityDomain(ApplicabilityDomain):
 class IsolationForestApplicabilityDomain(ApplicabilityDomain):
     """Applicability domain defined using isolation forest."""
 
-    def __init__(self):
+    def __init__(self, random_state: int=1234, **kwargs):
+        if 'random_state' in kwargs.keys():
+            raise ValueError('random_state must not be defined multiple times')
         super().__init__()
-        self.isol = IsolationForest(max_samples=0.7, max_features=0.7,  bootstrap=True, random_state=1234)
+        self.isol = IsolationForest(**kwargs, random_state=random_state)
 
     def _fit(self, X):
         self.isol.fit(X)

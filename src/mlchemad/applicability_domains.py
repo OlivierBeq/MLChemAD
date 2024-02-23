@@ -473,7 +473,8 @@ class KNNApplicabilityDomain(ApplicabilityDomain):
         :param alpha: ratio of inlier samples (default: 0.95) calculated from the training set; ignored if hard_threshold is set
         :param hard_threshold: samples with a distance greater or equal to this threshold will be considered outliers
         :param scaling: scaling method; must be one of 'robust', 'minmax', 'maxabs', 'standard' or None (default: 'robust')
-        :param dist: kNN distance to be calculated (default: euclidean); one of {list(dist_fns.keys())}
+        :param dist: kNN distance to be calculated (default: euclidean); one of {list(dist_fns.keys())};
+        jaccard is recommended for binary fingerprints.
         :param scaler_kwargs: additional parameters to supply to the scaler
         :param njobs: number of parallel processes used to fit the kNN model
         """

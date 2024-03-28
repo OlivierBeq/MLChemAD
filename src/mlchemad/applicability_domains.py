@@ -151,13 +151,13 @@ class ConvexHullApplicabilityDomain(ApplicabilityDomain):
 class PCABoundingBoxApplicabilityDomain(ApplicabilityDomain):
     """Applicability domain defined as the bounding box around the principal components of the training feature matrix."""
 
-    def __init__(self, scaling: str = 'robust', explained_var: float = 0.9,
+    def __init__(self, scaling: str | None = 'robust', explained_var: float = 0.9,
                  random_state: Union[int, RandomState] = 1234,
                  scaler_kwargs=None, pca_kwargs=None):
         """Create the convex hull applicability domain. Transforms the input features
         with principal component analysis (PCA) to ensure a convex hull is found.
 
-        :param scaling: scaling method; must be one of 'robust', 'minmax', 'maxabs' or 'standard' (default: 'robust')
+        :param scaling: scaling method; must be one of 'robust', 'minmax', 'maxabs', 'standard' or None (default: 'robust')
         :param explained_var: minimum value principal components' cumulative variance must reach to be included
         :param random_state: random state of the principal component analysis (PCA)
         :param scaler_kwargs: additional parameters to supply to the scaler
@@ -169,7 +169,7 @@ class PCABoundingBoxApplicabilityDomain(ApplicabilityDomain):
         if scaler_kwargs is None:
             scaler_kwargs = {}
         scaling_methods = ('robust', 'minmax', 'maxabs', 'standard')
-        if scaling not in scaling_methods:
+        if scaling not in scaling_methods and scaling is not None:
             raise ValueError(f'scaling method must be one of {scaling_methods}')
         if 'random_state' in pca_kwargs:
             raise ValueError('pca_kwargs must not set the following parameters: \'random_state\'')
@@ -182,8 +182,10 @@ class PCABoundingBoxApplicabilityDomain(ApplicabilityDomain):
             self.scaler = MaxAbsScaler(**scaler_kwargs)
         elif scaling == 'standard':
             self.scaler = StandardScaler(**scaler_kwargs)
+        elif scaling is None:
+            self.scaler = None
         else:
-            raise NotImplementedError('scaling methof not implemented')
+            raise NotImplementedError('scaling method not implemented')
         self.min_explained_var = explained_var
         # PCA ensuring the simplex is not flat
         self.pca = PCA(random_state=random_state,
@@ -195,11 +197,11 @@ class PCABoundingBoxApplicabilityDomain(ApplicabilityDomain):
         :param X: feature matrix
         """
         # Fit scaler and PCA
-        X = self.scaler.fit_transform(X)
+        X = self.scaler.fit_transform(X) if self.scaler is not None else X
         self.pca.fit(X)
         # Determine the number of components
         ratio_cumsum = stable_cumsum(self.pca.explained_variance_ratio_)
-        n_components = np.searchsorted(ratio_cumsum, self.pca.n_components_, side="right") + 1
+        n_components = np.searchsorted(ratio_cumsum, self.min_explained_var, side="right") + 1
         # Modify the PCA object in place
         self.pca.components_ = self.pca.components_[:n_components]
         self.pca.n_components_ = n_components
@@ -220,9 +222,12 @@ class PCABoundingBoxApplicabilityDomain(ApplicabilityDomain):
         """
         # Scale input features
         if sample.ndim == 1:
-            sample = self.pca.transform(self.scaler.transform(sample.reshape((1, len(sample)))))
+            sample = sample.reshape((1, len(sample)))
+            sample = self.scaler.transform(sample) if self.scaler is not None else sample
+            sample = self.pca.transform(sample)
             return ((sample >= self.min_) & (sample <= self.max_)).all()
-        sample = self.pca.transform(self.scaler.transform(sample))
+        sample = self.scaler.transform(sample) if self.scaler is not None else sample
+        sample = self.pca.transform(sample)
         return ((sample >= self.min_) & (sample <= self.max_)).all(axis=1)
 
 

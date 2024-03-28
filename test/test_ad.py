@@ -141,6 +141,19 @@ class TestAD(unittest.TestCase):
         ad.fit(self.mekenyan_veith.training)
         self.assertGreaterEqual(sum(ad.contains(self.mekenyan_veith.test)), 0)
         self.assertLessEqual(sum(ad.contains(self.mekenyan_veith.test)), self.mekenyan_veith.test.shape[0])
+        
+    def test_pca_none_boundingbox(self):
+        ad = PCABoundingBoxApplicabilityDomain(scaling=None)
+        ad.fit(self.X_cent1_sd1)
+        self.assertGreater(sum(ad.contains(self.X_cent1_sd1)),
+                            0.9 * len(self.X_cent1_sd1))
+        self.assertEquals(sum(ad.contains(self.X_cent6_sd1)),
+                            0)
+        self.assertLess(sum(ad.contains(self.X_cent1_sd3)),
+                        len(self.X_cent1_sd3))
+        ad.fit(self.mekenyan_veith.training)
+        self.assertGreaterEqual(sum(ad.contains(self.mekenyan_veith.test)), 0)
+        self.assertLessEqual(sum(ad.contains(self.mekenyan_veith.test)), self.mekenyan_veith.test.shape[0])
 
     def test_leverage(self):
         ad = LeverageApplicabilityDomain()

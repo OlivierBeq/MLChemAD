@@ -201,7 +201,7 @@ class PCABoundingBoxApplicabilityDomain(ApplicabilityDomain):
         self.pca.fit(X)
         # Determine the number of components
         ratio_cumsum = stable_cumsum(self.pca.explained_variance_ratio_)
-        n_components = np.searchsorted(ratio_cumsum, self.pca.n_components_, side="right") + 1
+        n_components = np.searchsorted(ratio_cumsum, self.min_explained_var, side="right") + 1
         # Modify the PCA object in place
         self.pca.components_ = self.pca.components_[:n_components]
         self.pca.n_components_ = n_components

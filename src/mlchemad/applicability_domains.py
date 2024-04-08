@@ -522,8 +522,8 @@ class KNNApplicabilityDomain(ApplicabilityDomain):
         self.X_norm = self.scaler.fit_transform(X) if self.scaler is not None else X
         # Fit the NN
         self.nn.fit(self.X_norm)
-        # Find the distance to the kNN
-        self.kNN_dist = self.nn.kneighbors(self.X_norm, return_distance=True)[0].mean(axis=1)
+        # Find the distance to the kNN neighbors (ignoring the first neighbor, which is the sample itself)
+        self.kNN_dist = self.nn.kneighbors(self.X_norm, return_distance=True, n_neighbors=self.k+1)[0][:, 1:].mean(axis=1)
         kNN_train_distance_sorted_ = np.trim_zeros(np.sort(self.kNN_dist))
         # Find the confidence threshold
         if self.hard_threshold:

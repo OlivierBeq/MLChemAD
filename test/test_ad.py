@@ -22,17 +22,17 @@ class TestAD(unittest.TestCase):
     def test_minmax_boundingbox(self):
         ad = BoundingBoxApplicabilityDomain(percentiles=None)
         ad.fit(self.X_cent1_sd1)
-        self.assertEquals(sum(ad.contains(self.X_cent1_sd1)),
+        self.assertEqual(sum(ad.contains(self.X_cent1_sd1)),
                           len(self.X_cent1_sd1))
-        self.assertEquals(sum(ad.contains(self.X_cent6_sd1)),
+        self.assertEqual(sum(ad.contains(self.X_cent6_sd1)),
                           0)
         self.assertLess(sum(ad.contains(self.X_cent1_sd3)),
                         len(self.X_cent1_sd3))
-        self.assertEquals(ad.contains(self.X_cent1_sd1).tolist(),
+        self.assertEqual(ad.contains(self.X_cent1_sd1).tolist(),
                           [ad.contains(x) for x in self.X_cent1_sd1])
-        self.assertEquals(ad.contains(self.X_cent6_sd1).tolist(),
+        self.assertEqual(ad.contains(self.X_cent6_sd1).tolist(),
                           [ad.contains(x) for x in self.X_cent6_sd1])
-        self.assertEquals(ad.contains(self.X_cent1_sd3).tolist(),
+        self.assertEqual(ad.contains(self.X_cent1_sd3).tolist(),
                           [ad.contains(x) for x in self.X_cent1_sd3])
         ad.fit(self.mekenyan_veith.training)
         self.assertGreaterEqual(sum(ad.contains(self.mekenyan_veith.test)), 0)
@@ -44,15 +44,15 @@ class TestAD(unittest.TestCase):
         ad.fit(self.X_cent1_sd1)
         self.assertGreater(sum(ad.contains(self.X_cent1_sd1)),
                            0.9 * len(self.X_cent1_sd1))
-        self.assertEquals(sum(ad.contains(self.X_cent6_sd1)),
+        self.assertEqual(sum(ad.contains(self.X_cent6_sd1)),
                           0)
         self.assertLess(sum(ad.contains(self.X_cent1_sd3)),
                         len(self.X_cent1_sd3))
-        self.assertEquals(ad.contains(self.X_cent1_sd1).tolist(),
+        self.assertEqual(ad.contains(self.X_cent1_sd1).tolist(),
                           [ad.contains(x) for x in self.X_cent1_sd1])
-        self.assertEquals(ad.contains(self.X_cent6_sd1).tolist(),
+        self.assertEqual(ad.contains(self.X_cent6_sd1).tolist(),
                           [ad.contains(x) for x in self.X_cent6_sd1])
-        self.assertEquals(ad.contains(self.X_cent1_sd3).tolist(),
+        self.assertEqual(ad.contains(self.X_cent1_sd3).tolist(),
                           [ad.contains(x) for x in self.X_cent1_sd3])
         ad.fit(self.mekenyan_veith.training)
         self.assertGreaterEqual(sum(ad.contains(self.mekenyan_veith.test)), 0)
@@ -63,15 +63,15 @@ class TestAD(unittest.TestCase):
         ad.fit(self.X_cent1_sd1)
         self.assertGreater(sum(ad.contains(self.X_cent1_sd1)),
                            0.8 * len(self.X_cent1_sd1))
-        self.assertEquals(sum(ad.contains(self.X_cent6_sd1)),
+        self.assertEqual(sum(ad.contains(self.X_cent6_sd1)),
                           0)
         self.assertLess(sum(ad.contains(self.X_cent1_sd3)),
                         len(self.X_cent1_sd3))
-        self.assertEquals(ad.contains(self.X_cent1_sd1).tolist(),
+        self.assertEqual(ad.contains(self.X_cent1_sd1).tolist(),
                           [ad.contains(x) for x in self.X_cent1_sd1])
-        self.assertEquals(ad.contains(self.X_cent6_sd1).tolist(),
+        self.assertEqual(ad.contains(self.X_cent6_sd1).tolist(),
                           [ad.contains(x) for x in self.X_cent6_sd1])
-        self.assertEquals(ad.contains(self.X_cent1_sd3).tolist(),
+        self.assertEqual(ad.contains(self.X_cent1_sd3).tolist(),
                           [ad.contains(x) for x in self.X_cent1_sd3])
         ad.fit(self.mekenyan_veith.training)
         self.assertGreaterEqual(sum(ad.contains(self.mekenyan_veith.test)), 0)
@@ -80,11 +80,11 @@ class TestAD(unittest.TestCase):
     def test_convexhull(self):
         ad = ConvexHullApplicabilityDomain()
         ad.fit(self.X_cent1_sd1)
-        self.assertEquals(ad.contains(self.X_cent1_sd1[:100]).tolist(),
+        self.assertEqual(ad.contains(self.X_cent1_sd1[:100]).tolist(),
                           [ad.contains(x) for x in self.X_cent1_sd1[:100]])
-        self.assertEquals(ad.contains(self.X_cent6_sd1[:100]).tolist(),
+        self.assertEqual(ad.contains(self.X_cent6_sd1[:100]).tolist(),
                           [ad.contains(x) for x in self.X_cent6_sd1[:100]])
-        self.assertEquals(ad.contains(self.X_cent1_sd3[:100]).tolist(),
+        self.assertEqual(ad.contains(self.X_cent1_sd3[:100]).tolist(),
                           [ad.contains(x) for x in self.X_cent1_sd3[:100]])
         ad.fit(self.mekenyan_veith.training)
         self.assertGreaterEqual(sum(ad.contains(self.mekenyan_veith.test)), 0)
@@ -95,7 +95,7 @@ class TestAD(unittest.TestCase):
         ad.fit(self.X_cent1_sd1)
         self.assertGreater(sum(ad.contains(self.X_cent1_sd1)),
                            0.9 * len(self.X_cent1_sd1))
-        self.assertEquals(sum(ad.contains(self.X_cent6_sd1)),
+        self.assertEqual(sum(ad.contains(self.X_cent6_sd1)),
                           0)
         self.assertLess(sum(ad.contains(self.X_cent1_sd3)),
                         len(self.X_cent1_sd3))
@@ -108,7 +108,7 @@ class TestAD(unittest.TestCase):
         ad.fit(self.X_cent1_sd1)
         self.assertGreater(sum(ad.contains(self.X_cent1_sd1)),
                            0.9 * len(self.X_cent1_sd1))
-        self.assertEquals(sum(ad.contains(self.X_cent6_sd1)),
+        self.assertEqual(sum(ad.contains(self.X_cent6_sd1)),
                           0)
         self.assertLess(sum(ad.contains(self.X_cent1_sd3)),
                         len(self.X_cent1_sd3))
@@ -121,7 +121,7 @@ class TestAD(unittest.TestCase):
         ad.fit(self.X_cent1_sd1)
         self.assertGreater(sum(ad.contains(self.X_cent1_sd1)),
                           0.9 * len(self.X_cent1_sd1))
-        self.assertEquals(sum(ad.contains(self.X_cent6_sd1)),
+        self.assertEqual(sum(ad.contains(self.X_cent6_sd1)),
                           0)
         self.assertLess(sum(ad.contains(self.X_cent1_sd3)),
                         len(self.X_cent1_sd3))
@@ -134,7 +134,7 @@ class TestAD(unittest.TestCase):
         ad.fit(self.X_cent1_sd1)
         self.assertGreater(sum(ad.contains(self.X_cent1_sd1)),
                            0.9 * len(self.X_cent1_sd1))
-        self.assertEquals(sum(ad.contains(self.X_cent6_sd1)),
+        self.assertEqual(sum(ad.contains(self.X_cent6_sd1)),
                           0)
         self.assertLess(sum(ad.contains(self.X_cent1_sd3)),
                         len(self.X_cent1_sd3))
@@ -147,7 +147,7 @@ class TestAD(unittest.TestCase):
         ad.fit(self.X_cent1_sd1)
         self.assertGreater(sum(ad.contains(self.X_cent1_sd1)),
                             0.9 * len(self.X_cent1_sd1))
-        self.assertEquals(sum(ad.contains(self.X_cent6_sd1)),
+        self.assertEqual(sum(ad.contains(self.X_cent6_sd1)),
                             0)
         self.assertLess(sum(ad.contains(self.X_cent1_sd3)),
                         len(self.X_cent1_sd3))
@@ -160,15 +160,15 @@ class TestAD(unittest.TestCase):
         ad.fit(self.X_cent1_sd1)
         self.assertGreater(sum(ad.contains(self.X_cent1_sd1)),
                            0.9 * len(self.X_cent1_sd1))
-        self.assertEquals(sum(ad.contains(self.X_cent6_sd3)),
+        self.assertEqual(sum(ad.contains(self.X_cent6_sd3)),
                           0)
         self.assertLess(sum(ad.contains(self.X_cent1_sd3)),
                         len(self.X_cent1_sd3))
-        self.assertEquals(ad.contains(self.X_cent1_sd1).tolist(),
+        self.assertEqual(ad.contains(self.X_cent1_sd1).tolist(),
                           [ad.contains(x) for x in self.X_cent1_sd1])
-        self.assertEquals(ad.contains(self.X_cent6_sd1).tolist(),
+        self.assertEqual(ad.contains(self.X_cent6_sd1).tolist(),
                           [ad.contains(x) for x in self.X_cent6_sd1])
-        self.assertEquals(ad.contains(self.X_cent1_sd3).tolist(),
+        self.assertEqual(ad.contains(self.X_cent1_sd3).tolist(),
                           [ad.contains(x) for x in self.X_cent1_sd3])
         ad.fit(self.mekenyan_veith.training)
         self.assertGreaterEqual(sum(ad.contains(self.mekenyan_veith.test)), 0)
@@ -179,15 +179,15 @@ class TestAD(unittest.TestCase):
         ad.fit(self.X_cent1_sd1)
         self.assertGreater(sum(ad.contains(self.X_cent1_sd1)),
                            0.9 * len(self.X_cent1_sd1))
-        self.assertEquals(sum(ad.contains(self.X_cent6_sd3)),
+        self.assertEqual(sum(ad.contains(self.X_cent6_sd3)),
                           0)
         self.assertLess(sum(ad.contains(self.X_cent1_sd3)),
                         len(self.X_cent1_sd3))
-        self.assertEquals(ad.contains(self.X_cent1_sd1).tolist(),
+        self.assertEqual(ad.contains(self.X_cent1_sd1).tolist(),
                           [ad.contains(x) for x in self.X_cent1_sd1])
-        self.assertEquals(ad.contains(self.X_cent6_sd1).tolist(),
+        self.assertEqual(ad.contains(self.X_cent6_sd1).tolist(),
                           [ad.contains(x) for x in self.X_cent6_sd1])
-        self.assertEquals(ad.contains(self.X_cent1_sd3).tolist(),
+        self.assertEqual(ad.contains(self.X_cent1_sd3).tolist(),
                           [ad.contains(x) for x in self.X_cent1_sd3])
         ad.fit(self.mekenyan_veith.training)
         self.assertGreaterEqual(sum(ad.contains(self.mekenyan_veith.test)), 0)
@@ -198,15 +198,15 @@ class TestAD(unittest.TestCase):
         ad.fit(self.X_cent1_sd1)
         self.assertGreater(sum(ad.contains(self.X_cent1_sd1)),
                            0.9 * len(self.X_cent1_sd1))
-        self.assertEquals(sum(ad.contains(self.X_cent6_sd1)),
+        self.assertEqual(sum(ad.contains(self.X_cent6_sd1)),
                           0)
         self.assertLess(sum(ad.contains(self.X_cent1_sd3)),
                         len(self.X_cent1_sd3))
-        self.assertEquals(ad.contains(self.X_cent1_sd1).tolist(),
+        self.assertEqual(ad.contains(self.X_cent1_sd1).tolist(),
                           [ad.contains(x) for x in self.X_cent1_sd1])
-        self.assertEquals(ad.contains(self.X_cent6_sd1).tolist(),
+        self.assertEqual(ad.contains(self.X_cent6_sd1).tolist(),
                           [ad.contains(x) for x in self.X_cent6_sd1])
-        self.assertEquals(ad.contains(self.X_cent1_sd3).tolist(),
+        self.assertEqual(ad.contains(self.X_cent1_sd3).tolist(),
                           [ad.contains(x) for x in self.X_cent1_sd3])
         ad.fit(self.mekenyan_veith.training)
         self.assertGreaterEqual(sum(ad.contains(self.mekenyan_veith.test)), 0)
@@ -217,22 +217,22 @@ class TestAD(unittest.TestCase):
         ad.fit(self.X_cent1_sd1)
         self.assertGreater(sum(ad.contains(self.X_cent1_sd1)),
                            0.9 * len(self.X_cent1_sd1))
-        self.assertEquals(sum(ad.contains(self.X_cent6_sd1)),
+        self.assertEqual(sum(ad.contains(self.X_cent6_sd1)),
                           0)
         self.assertLess(sum(ad.contains(self.X_cent1_sd3)),
                         len(self.X_cent1_sd3))
 
-        self.assertEquals(ad.contains(self.X_cent1_sd1).tolist(),
+        self.assertEqual(ad.contains(self.X_cent1_sd1).tolist(),
                           [ad.contains(x) for x in self.X_cent1_sd1])
-        self.assertEquals(ad.contains(self.X_cent6_sd1).tolist(),
+        self.assertEqual(ad.contains(self.X_cent6_sd1).tolist(),
                           [ad.contains(x) for x in self.X_cent6_sd1])
-        self.assertEquals(ad.contains(self.X_cent1_sd3).tolist(),
+        self.assertEqual(ad.contains(self.X_cent1_sd3).tolist(),
                           [ad.contains(x) for x in self.X_cent1_sd3])
-        self.assertEquals(ad.contains(self.X_cent1_sd1).tolist(),
+        self.assertEqual(ad.contains(self.X_cent1_sd1).tolist(),
                           [ad.contains(x) for x in self.X_cent1_sd1])
-        self.assertEquals(ad.contains(self.X_cent6_sd1).tolist(),
+        self.assertEqual(ad.contains(self.X_cent6_sd1).tolist(),
                           [ad.contains(x) for x in self.X_cent6_sd1])
-        self.assertEquals(ad.contains(self.X_cent1_sd3).tolist(),
+        self.assertEqual(ad.contains(self.X_cent1_sd3).tolist(),
                           [ad.contains(x) for x in self.X_cent1_sd3])
         ad.fit(self.mekenyan_veith.training)
         self.assertGreaterEqual(sum(ad.contains(self.mekenyan_veith.test)), 0)
@@ -243,15 +243,15 @@ class TestAD(unittest.TestCase):
         ad.fit(self.X_cent1_sd1)
         self.assertGreater(sum(ad.contains(self.X_cent1_sd1)),
                            0.9 * len(self.X_cent1_sd1))
-        self.assertEquals(sum(ad.contains(self.X_cent6_sd1)),
+        self.assertEqual(sum(ad.contains(self.X_cent6_sd1)),
                           0)
         self.assertLess(sum(ad.contains(self.X_cent1_sd3)),
                         len(self.X_cent1_sd3))
-        self.assertEquals(ad.contains(self.X_cent1_sd1).tolist(),
+        self.assertEqual(ad.contains(self.X_cent1_sd1).tolist(),
                           [ad.contains(x) for x in self.X_cent1_sd1])
-        self.assertEquals(ad.contains(self.X_cent6_sd1).tolist(),
+        self.assertEqual(ad.contains(self.X_cent6_sd1).tolist(),
                           [ad.contains(x) for x in self.X_cent6_sd1])
-        self.assertEquals(ad.contains(self.X_cent1_sd3).tolist(),
+        self.assertEqual(ad.contains(self.X_cent1_sd3).tolist(),
                           [ad.contains(x) for x in self.X_cent1_sd3])
         ad.fit(self.mekenyan_veith.training)
         self.assertGreaterEqual(sum(ad.contains(self.mekenyan_veith.test)), 0)
@@ -260,17 +260,17 @@ class TestAD(unittest.TestCase):
     def test_topkat(self):
         ad = TopKatApplicabilityDomain()
         ad.fit(self.X_cent1_sd1)
-        self.assertEquals(sum(ad.contains(self.X_cent1_sd1)),
+        self.assertEqual(sum(ad.contains(self.X_cent1_sd1)),
                           len(self.X_cent1_sd1))
-        self.assertEquals(sum(ad.contains(self.X_cent6_sd1)),
+        self.assertEqual(sum(ad.contains(self.X_cent6_sd1)),
                           0)
         self.assertLess(sum(ad.contains(self.X_cent1_sd3)),
                         len(self.X_cent1_sd3))
-        self.assertEquals(ad.contains(self.X_cent1_sd1).tolist(),
+        self.assertEqual(ad.contains(self.X_cent1_sd1).tolist(),
                           [ad.contains(x) for x in self.X_cent1_sd1])
-        self.assertEquals(ad.contains(self.X_cent6_sd1).tolist(),
+        self.assertEqual(ad.contains(self.X_cent6_sd1).tolist(),
                           [ad.contains(x) for x in self.X_cent6_sd1])
-        self.assertEquals(ad.contains(self.X_cent1_sd3).tolist(),
+        self.assertEqual(ad.contains(self.X_cent1_sd3).tolist(),
                           [ad.contains(x) for x in self.X_cent1_sd3])
         ad.fit(self.mekenyan_veith.training)
         self.assertGreaterEqual(sum(ad.contains(self.mekenyan_veith.test)), 0)
@@ -281,15 +281,15 @@ class TestAD(unittest.TestCase):
         ad.fit(self.X_cent1_sd1)
         self.assertGreater(sum(ad.contains(self.X_cent1_sd1)),
                            0.9 * len(self.X_cent1_sd1))
-        self.assertEquals(sum(ad.contains(self.X_cent6_sd1)),
+        self.assertEqual(sum(ad.contains(self.X_cent6_sd1)),
                           0)
         self.assertLess(sum(ad.contains(self.X_cent1_sd3)),
                         len(self.X_cent1_sd3))
-        self.assertEquals(ad.contains(self.X_cent1_sd1).tolist(),
+        self.assertEqual(ad.contains(self.X_cent1_sd1).tolist(),
                           [ad.contains(x) for x in self.X_cent1_sd1])
-        self.assertEquals(ad.contains(self.X_cent6_sd1).tolist(),
+        self.assertEqual(ad.contains(self.X_cent6_sd1).tolist(),
                           [ad.contains(x) for x in self.X_cent6_sd1])
-        self.assertEquals(ad.contains(self.X_cent1_sd3).tolist(),
+        self.assertEqual(ad.contains(self.X_cent1_sd3).tolist(),
                           [ad.contains(x) for x in self.X_cent1_sd3])
         ad.fit(self.mekenyan_veith.training)
         self.assertGreaterEqual(sum(ad.contains(self.mekenyan_veith.test)), 0)
@@ -300,15 +300,15 @@ class TestAD(unittest.TestCase):
         ad.fit(self.X_cent1_sd1)
         self.assertGreater(sum(ad.contains(self.X_cent1_sd1)),
                            0.9 * len(self.X_cent1_sd1))
-        self.assertEquals(sum(ad.contains(self.X_cent6_sd1)),
+        self.assertEqual(sum(ad.contains(self.X_cent6_sd1)),
                           0)
         self.assertLess(sum(ad.contains(self.X_cent1_sd3)),
                         len(self.X_cent1_sd3))
-        self.assertEquals(ad.contains(self.X_cent1_sd1).tolist(),
+        self.assertEqual(ad.contains(self.X_cent1_sd1).tolist(),
                           [ad.contains(x) for x in self.X_cent1_sd1])
-        self.assertEquals(ad.contains(self.X_cent6_sd1).tolist(),
+        self.assertEqual(ad.contains(self.X_cent6_sd1).tolist(),
                           [ad.contains(x) for x in self.X_cent6_sd1])
-        self.assertEquals(ad.contains(self.X_cent1_sd3).tolist(),
+        self.assertEqual(ad.contains(self.X_cent1_sd3).tolist(),
                           [ad.contains(x) for x in self.X_cent1_sd3])
         ad.fit(self.mekenyan_veith.training)
         self.assertGreaterEqual(sum(ad.contains(self.mekenyan_veith.test)), 0)
